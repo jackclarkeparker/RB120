@@ -227,7 +227,7 @@ class R2D2 < Computer
       @move = Move.initialize_move_type(choice)
       break if move > Move.initialize_move_type(human_choice_two_rounds_prior)
     end
-    move_history << move.value
+    move_history << choice
   end
 
   private
@@ -262,7 +262,7 @@ class Hal < Computer
       @move = Move.initialize_move_type(choice)
       break if move > Move.initialize_move_type(last_move)
     end
-    move_history << move.value
+    move_history << choice
   end
 
   private
@@ -289,7 +289,7 @@ class Chappie < Computer
       super
     else
       @move = Move.initialize_move_type(last_move)
-      move_history << move.value
+      move_history << last_move
     end
   end
 
