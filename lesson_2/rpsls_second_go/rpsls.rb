@@ -1,6 +1,6 @@
 require 'yaml'
 
-MESSAGES = YAML.load_file('game_rules.yml')
+MESSAGES = YAML.load_file('game_messages.yml')
 
 RULES = MESSAGES['rule_messages']
 HUMAN_MESSAGES = MESSAGES['human_messages']
