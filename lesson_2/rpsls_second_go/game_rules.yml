@@ -1,0 +1,146 @@
+rule_messages:
+  open_rules_invalid_input: |
+    Sorry, must be y or n.
+
+  display_menu: |+
+    (g) General rules
+
+    (m) Move rules
+
+    (o) Opponent information
+
+    (r) Return to game
+
+    (Input the first letter of the item you would like to access)
+
+  rules_menu_invalid_input: |+
+
+    Sorry, didn't recognize that input, please enter the first letter of any of the
+    items on the menu (g, m, o, r).
+
+  general_rules:
+    1: |+
+      In this variation on the classic game, there are five possible moves that you
+      and your opponent will each select from.
+
+    2: |+
+      Whoever has the winning move from a given combination will win the point for
+      that round.
+
+    3: |+
+      The first player to reach 10 points wins!
+
+    4: |+
+       Following the declaration of the winner for the current round, you'll get a
+       chance to review the history of all moves that either player made for each
+       round played thus far.
+
+    5: |+
+       Search through this history to see whether you can crack the code of what makes
+       your opponent tick.
+
+    6: |+
+      Check out "Opponent Information" for more info on how to use this history.
+
+  move_rules:
+    1: |+
+      The rules for determining which move wins in each scenario are as follows:
+
+    2: |+
+        Scissors cuts Paper covers Rock crushes
+        Lizard poisons Spock smashes Scissors
+        decapitates Lizard eats Paper disproves
+        Spock vaporizes Rock crushes Scissors
+
+  opponent_info:
+    1: |+
+      You will be playing against one of five computer AIs, each with their own
+      idiosyncracies.
+
+    2: |+
+      As you'll dicover, figuring out the play style of a given opponent is the key to
+      increasing your winrate against them.
+
+    3: |+
+      At the beginning of each game, scrounge bot - the last friendly AI around -
+      will pull up a description of your current opponent.
+
+    4: |+
+      Search for clues about your opponent's play style in this description.
+
+
+human_messages:
+  name_prompt: What's your name?
+  name_invalid_input: Sorry, must enter a value.
+  move_prompt: "Please choose (r)ock, (p)aper, (sc)issors, (l)izard, or (sp)ock:"
+  move_invalid_input: "Sorry, invalid choice."
+
+
+opponent_messages:
+
+  r2d2:
+    description_messages:
+      1: "\nYour opponent is R2D2."
+      2: He comes from a world far far away where he was once a legendary warrior.
+      3: Lucky for you he's stuck in the past.
+      4: If he could shake off his ghosts I wouldn't like your odds.
+
+  hal:
+    description_messages:
+      1: "\nYour opponent is Hal."
+      2: Hal has masochistic tendencies.
+  
+  chappie:
+    description_messages:
+      1: "\nYour opponent is Chappie."
+      2: Chappie recently walked into a lamp post.
+      3: He's still seeing everything with double vision.
+
+  sonny:
+    description_messages:
+      1: "\nYour opponent is Sonny."
+      2: He plays old school.
+
+  number_5:
+    description_messages:
+      1: "\nYour opponent is Number 5."
+      2: There's another name referenced on this file.
+      3: "\nTwo-Face."
+        
+
+    coinflip:
+      prompt: |+
+        "(h)eads or (t)ails?"
+
+      invalid_input: (Invalid input, please enter the letter of your choice only [ h or t ])
+
+      drama:
+        1: "\n\nNumber 5 twirls something shiny between her digital fingers.."
+        2: |+
+            A coin appears!
+
+        3: |+
+            Flicking her thumb, Number 5 shoots the coin up into the air, watching it
+            pirouette above her.
+
+        4: |+
+            You follow her gaze upward, wondering why it's taking so long for the coin to
+            fall back down to her hand.
+
+        5:  A chill runs up your spine as she turns her sharp LED glare back upon you.
+
+      outcome: |+
+                As you watch, the spinning coin floats back down and settles on her hand.
+
+rps_messages:
+  welcome: |+
+    Welcome to Rock, Paper, Scissors, Lizard, Spock!
+
+  goodbye: Thanks for playing Rock, Paper, Scissors, Lizard, Spock. Goodbye!
+  scoreboard_header: ======SCOREBOARD======
+  move_history_header: |+
+                        __________Move_History_________
+
+  grand_winner_announcer: THE GRAND WINNER IS
+  play_again_prompt: Would you like to play again? (y/n)
+  play_again_invalid_input: Sorry, must be y or n.
