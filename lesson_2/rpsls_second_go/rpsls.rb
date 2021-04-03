@@ -525,8 +525,8 @@ class RPSGame
     display_welcome_message
     display_rules
     @human = Human.new
-    @computer = Number5.new # Computer.initialize_personality
-    # computer.display_introduction
+    @computer = Computer.initialize_personality
+    computer.display_introduction
   end
 
   def play
@@ -676,29 +676,3 @@ class RPSGame
 end
 
 RPSGame.new.play
-
-=begin
-
-- Question regarding moving functionality into a class, and then running that
-  behaviour during class instantiation; effectively creating an object to run
-  a number of instance methods, but then not making any further use of the
-  object.
-  - This means not storing the object as a collaborator from where it is created
-
-- How about the way of initializing the Move subclasses?
-  - Is it weird to use a structure like this, erroneous? Indirect?
-  - Would it be better to directly instantiate the moves rather than running a
-    class method to randomly select them?
-
-- I haven't actually fulfilled the suggestion of the assignment with personalities.
-  maybe I could implement one of the personalities with the traits they've suggested.
-  Or I could try it out with Sonny vs. the way I'm doing it of giving him his
-  own Move instantiation method. I could just talk about this to reference that
-  portion of the assignment.
-
-- Take a look at your attr_* methods, are there any attributes that are public
-  that you'd like to restrict access to?
-
-- Style guide for how to write multi-line break if statement.
-
-=end
