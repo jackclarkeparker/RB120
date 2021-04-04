@@ -2,11 +2,6 @@ require 'yaml'
 
 MESSAGES = YAML.load_file('game_messages.yml')
 
-RULES = MESSAGES['rule_messages']
-HUMAN_MESSAGES = MESSAGES['human_messages']
-OPPONENT_MESSAGES = MESSAGES['opponent_messages']
-RPS_MESSAGES = MESSAGES['rps_messages']
-
 # This is used for "dramatic" effect during message display sequences
 module MessagePender
   def display_pending
@@ -36,9 +31,9 @@ module EasilyEnterable
 end
 
 class Move
-  attr_reader :value
-
   VALUES = ['rock', 'paper', 'scissors', 'lizard', 'spock']
+
+  attr_reader :value
 
   # 1) Move objects are not directly initialized, instead the subclass
   #    specifications of move objects are used; Rock, Paper, Scissors.. objects
@@ -122,8 +117,6 @@ class Spock < Move
 end
 
 class Player
-  include MessagePender
-
   attr_accessor :move, :score, :move_history
   attr_reader :name
 
@@ -150,6 +143,8 @@ class Player
 end
 
 class Human < Player
+  HUMAN_MESSAGES = MESSAGES['human_messages']
+
   include EasilyEnterable
 
   def choose
@@ -187,6 +182,9 @@ end
 
 class Computer < Player
   PERSONALITIES = ['R2D2', 'Hal', 'Chappie', 'Sonny', 'Number 5']
+  OPPONENT_MESSAGES = MESSAGES['opponent_messages']
+
+  include MessagePender, Pauseable
 
   def choose
     choice = Move::VALUES.sample
@@ -200,6 +198,7 @@ class Computer < Player
     print "BOOT SEQUENCE"
     display_pending
     display_description
+    type_to_continue
   end
 
   def self.initialize_personality
@@ -215,7 +214,9 @@ class Computer < Player
 end
 
 class R2D2 < Computer
-  # R2D2 searches the player's move history and choose a move that will beat
+  R2D2_DESCRIPTION = OPPONENT_MESSAGES["r2d2"]["description_messages"]
+
+  # R2D2 searches the player's move history and chooses a move that will beat
   # the move they made two turns ago.
   def choose
     return super if move_history.size < 2
@@ -232,8 +233,6 @@ class R2D2 < Computer
 
   private
 
-  R2D2_DESCRIPTION = OPPONENT_MESSAGES["r2d2"]["description_messages"]
-
   def set_name
     @name = 'R2D2'
   end
@@ -246,11 +245,13 @@ class R2D2 < Computer
     puts R2D2_DESCRIPTION[3]
     sleep(2)
     puts R2D2_DESCRIPTION[4]
-    sleep(2.6)
+    sleep(2)
   end
 end
 
 class Hal < Computer
+  HAL_DESCRIPTION = OPPONENT_MESSAGES['hal']['description_messages']
+
   # Hal chooses a move that will beat his own last move
   def choose
     return super if move_history.empty?
@@ -267,8 +268,6 @@ class Hal < Computer
 
   private
 
-  HAL_DESCRIPTION = OPPONENT_MESSAGES['hal']['description_messages']
-
   def display_description
     puts HAL_DESCRIPTION[1]
     sleep(1)
@@ -282,6 +281,8 @@ class Hal < Computer
 end
 
 class Chappie < Computer
+  CHAPPIE_DESCRIPTION = OPPONENT_MESSAGES["chappie"]["description_messages"]
+
   # Chappie always uses the same move at least twice
   def choose
     last_move = move_history[-1]
@@ -295,15 +296,13 @@ class Chappie < Computer
 
   private
 
-  CHAPPIE_DESCRIPTION = OPPONENT_MESSAGES["chappie"]["description_messages"]
-
   def display_description
     puts CHAPPIE_DESCRIPTION[1]
     sleep(1)
     puts CHAPPIE_DESCRIPTION[2]
     sleep(1.5)
     puts CHAPPIE_DESCRIPTION[3]
-    sleep(3)
+    sleep(2)
   end
 
   def set_name
@@ -312,6 +311,8 @@ class Chappie < Computer
 end
 
 class Sonny < Computer
+  SONNY_DESCRIPTION = OPPONENT_MESSAGES['sonny']['description_messages']
+
   # Sonny only uses the original three moves from RPS
   def choose
     choice = ['rock', 'paper', 'scissors'].sample
@@ -324,8 +325,6 @@ class Sonny < Computer
   end
 
   private
-
-  SONNY_DESCRIPTION = OPPONENT_MESSAGES['sonny']['description_messages']
 
   def display_description
     puts SONNY_DESCRIPTION[1]
@@ -340,6 +339,10 @@ class Sonny < Computer
 end
 
 class Number5 < Computer
+  NUMBER5_DESCRIPTION = OPPONENT_MESSAGES['number_5']['description_messages']
+  COINFLIP_MESSAGES = OPPONENT_MESSAGES['number_5']['coinflip']
+  COINFLIP_DRAMA = COINFLIP_MESSAGES['drama']
+
   include EasilyEnterable
 
   def initialize
@@ -364,10 +367,6 @@ class Number5 < Computer
   end
 
   private
-
-  NUMBER5_DESCRIPTION = OPPONENT_MESSAGES['number_5']['description_messages']
-  COINFLIP_MESSAGES = OPPONENT_MESSAGES['number_5']['coinflip']
-  COINFLIP_DRAMA = COINFLIP_MESSAGES['drama']
 
   attr_accessor :move_number
 
@@ -441,6 +440,8 @@ end
 
 class Rules
   include Pauseable
+
+  RULES = MESSAGES['rule_messages']
 
   def initialize
     @rules_prompt_grammar = 'the'
@@ -519,6 +520,8 @@ end
 
 # Game Orchestration Engine
 class RPSGame
+  RPS_MESSAGES = MESSAGES['rps_messages']
+
   include MessagePender, Pauseable
 
   def initialize
@@ -534,7 +537,7 @@ class RPSGame
       match_loop
       system('clear')
       display_grand_winner
-      play_again? ? reset_scores : break
+      play_again? ? reset_game : break
     end
     display_goodbye_message
   end
@@ -610,7 +613,8 @@ class RPSGame
     when :computer then puts "#{computer} won!"
     when :tie      then puts "It's a tie!"
     end
-    sleep(1.3)
+    sleep(0.7)
+    type_to_continue
   end
 
   def find_grand_winner
@@ -669,9 +673,19 @@ class RPSGame
     return true  if answer.downcase == 'y'
   end
 
+  def reset_game
+    reset_scores
+    reset_move_history
+  end
+
   def reset_scores
     computer.score = 0
     human.score = 0
+  end
+
+  def reset_move_history
+    human.move_history = []
+    computer.move_history = []
   end
 end
 
