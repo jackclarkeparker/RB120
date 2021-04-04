@@ -35,8 +35,8 @@ class Move
 
   attr_reader :value
 
-  # 1) Move objects are not directly initialized, instead the subclass
-  #    specifications of move objects are used; Rock, Paper, Scissors.. objects
+  # Move objects are not directly initialized, instead the subclass
+  # specifications of move objects are used; Rock, Paper, Scissors.. objects
   def self.initialize_move_type(choice)
     case choice
     when 'rock'     then Rock.new
@@ -47,72 +47,51 @@ class Move
     end
   end
 
-  # 2) The subclasses of Move inherit their constructor from Move here
-  def initialize
-    @value = class_to_string
-  end
-
-  # 3) This helper method returns a string version of the class name which is
-  #    then stored in the @value attribute of the caller (used for displaying
-  #    and comparison purposes)
-  def class_to_string
-    self.class.to_s.downcase
-  end
-
   def to_s
     @value
   end
 
-  protected
-
-  def rock?
-    @value == 'rock'
+  def >(other_move)
+    wins_against.include?(other_move.value)
   end
 
-  def paper?
-    @value == 'paper'
-  end
+  private
 
-  def scissors?
-    @value == 'scissors'
-  end
-
-  def lizard?
-    @value == 'lizard'
-  end
-
-  def spock?
-    @value == 'spock'
-  end
+  attr_reader :wins_against
 end
 
 class Rock < Move
-  def >(other_move)
-    other_move.scissors? || other_move.lizard?
+  def initialize
+    @value = 'rock'
+    @wins_against = ['lizard', 'scissors']
   end
 end
 
 class Paper < Move
-  def >(other_move)
-    other_move.spock? || other_move.rock?
+  def initialize
+    @value = 'paper'
+    @wins_against = ['rock', 'spock']
   end
 end
 
 class Scissors < Move
-  def >(other_move)
-    other_move.paper? || other_move.lizard?
+  def initialize
+    @value = 'scissors'
+    @wins_against = ['paper', 'lizard']
   end
 end
 
 class Lizard < Move
-  def >(other_move)
-    other_move.spock? || other_move.paper?
+  def initialize
+    @value = 'lizard'
+    @wins_against = ['spock', 'paper']
   end
 end
 
 class Spock < Move
-  def >(other_move)
-    other_move.rock? || other_move.scissors?
+  def initialize
+    @value = 'spock'
+    @wins_against = ['scissors', 'rock']
   end
 end
 
@@ -521,6 +500,7 @@ end
 # Game Orchestration Engine
 class RPSGame
   RPS_MESSAGES = MESSAGES['rps_messages']
+  WINNING_SCORE = 10
 
   include MessagePender, Pauseable
 
@@ -613,12 +593,12 @@ class RPSGame
     when :computer then puts "#{computer} won!"
     when :tie      then puts "It's a tie!"
     end
-    sleep(0.7)
+    sleep(0.4)
     type_to_continue
   end
 
   def find_grand_winner
-    [human, computer].find { |player| player.score == 10 }
+    [human, computer].find { |player| player.score == WINNING_SCORE }
   end
 
   def display_move_history
