@@ -106,7 +106,6 @@ class Player
   @@players = []
 
   def initialize
-    set_name
     @score = 0
     @move_history = []
     @@players << self
@@ -139,8 +138,6 @@ class Human < Player
     move_history << choice
   end
 
-  private
-
   def set_name
     system('clear')
     n = ""
@@ -153,6 +150,7 @@ class Human < Player
     self.name = n
   end
 
+  private
   # This gives an array of all acceptable options for user input
   def input_options
     Move::VALUES + %w(r p sc l sp)
@@ -164,6 +162,11 @@ class Computer < Player
   OPPONENT_MESSAGES = MESSAGES['opponent_messages']
 
   include MessagePender, Pauseable
+
+  def initialize
+    super
+    @name = set_name
+  end
 
   def choose
     choice = Move::VALUES.sample
@@ -424,7 +427,19 @@ class Rules
 
   def initialize
     @rules_prompt_grammar = 'the'
-    rules_loop
+  end
+
+  def run_rules_loop
+    while open_rules?
+      display_rules_menu
+      choice = retrieve_rules_menu_input
+      case choice
+      when 'g' then display_general_rules
+      when 'm' then display_move_rules
+      when 'o' then display_opponent_info
+      when 'r' then break
+      end
+    end
   end
 
   private
@@ -440,19 +455,6 @@ class Rules
     end
     @rules_prompt_grammar = 'any other'
     answer.start_with?('y')
-  end
-
-  def rules_loop
-    while open_rules?
-      display_rules_menu
-      choice = retrieve_rules_menu_input
-      case choice
-      when 'g' then display_general_rules
-      when 'm' then display_move_rules
-      when 'o' then display_opponent_info
-      when 'r' then break
-      end
-    end
   end
 
   def display_rules_menu
@@ -505,14 +507,13 @@ class RPSGame
   include MessagePender, Pauseable
 
   def initialize
-    display_welcome_message
-    display_rules
     @human = Human.new
     @computer = Computer.initialize_personality
-    computer.display_introduction
+    @rules = Rules.new
   end
 
   def play
+    intro_sequence
     loop do
       match_loop
       system('clear')
@@ -526,6 +527,13 @@ class RPSGame
 
   attr_accessor :human, :computer
 
+  def intro_sequence
+    display_welcome_message
+    display_rules
+    human.set_name
+    computer.display_introduction
+  end
+
   def display_welcome_message
     system('clear')
     puts RPS_MESSAGES['welcome']
@@ -533,7 +541,7 @@ class RPSGame
   end
 
   def display_rules
-    Rules.new
+    @rules.run_rules_loop
   end
 
   def display_goodbye_message
